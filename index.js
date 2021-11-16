@@ -63,8 +63,9 @@ async function run() {
     app.get('/isAdmin', async (req,res)=>{
       const email = req.query.email;
       if(email){
-        const cursor = adminCollection.find({email: email})
+        const cursor = adminCollection.find({adminEmail: email})
       const isAdmin = await cursor.toArray();
+      console.log("He is admin", isAdmin.length>0);
       res.send(isAdmin.length > 0);
       }
     })
@@ -187,8 +188,19 @@ app.put('/users/:id', async (req, res) => {
 })
 
 
+
+app.delete('/users/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: ObjectId(id) };
+  const result = await usersCollection.deleteOne(query);
+  res.json(result);
+})
+
+
+
 app.post('/addAdmin/:adminEmail', async(req,res)=>{
-  const adminReq=req.params.adminEmail;
+  const adminReq=req.params;
+  console.log(adminReq);
   const result=await adminCollection.insertOne(adminReq);
   console.log(result);
   res.json(result);
